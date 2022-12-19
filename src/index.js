@@ -110,7 +110,7 @@ class Game extends React.Component {
         return null;
     }
 
-    return makeMove(currState, rowIndex, colIndex, rowIndex - 1, colIndex);
+    return this.makeMove(currState, rowIndex, colIndex, rowIndex - 1, colIndex);
   }
 
   slideDown = (currState) => {
@@ -121,7 +121,7 @@ class Game extends React.Component {
         return null;
     }
     
-    return makeMove(currState, rowIndex, colIndex, rowIndex + 1, colIndex);
+    return this.makeMove(currState, rowIndex, colIndex, rowIndex + 1, colIndex);
   }
 
   slideLeft = (currState) => {        
@@ -132,7 +132,7 @@ class Game extends React.Component {
         return null;
     }
     
-    return makeMove(currState, rowIndex, colIndex, rowIndex, colIndex - 1);
+    return this.makeMove(currState, rowIndex, colIndex, rowIndex, colIndex - 1);
   }
 
   slideRight = (currState) => {                
@@ -143,7 +143,7 @@ class Game extends React.Component {
         return null;
     }
 
-    return makeMove(currState, rowIndex, colIndex, rowIndex, colIndex + 1);
+    return this.makeMove(currState, rowIndex, colIndex, rowIndex, colIndex + 1);
   }
 
   
@@ -164,16 +164,17 @@ class Game extends React.Component {
 
     // we are going to try to do all  possible moves and stop at impossible moves.
 
-    if (nextState = slideUp(currArr)) {
+    let nextState;
+    if (nextState = this.slideUp(currArr)) {
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }
-    if (nextState = slideDown(currArr)) {
+    if (nextState = this.slideDown(currArr)) {
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }
-    if (nextState = slideLeft(currArr)) {
+    if (nextState = this.slideLeft(currArr)) {
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }
-    if (nextState = slideRight(currArr)) {
+    if (nextState = this.slideRight(currArr)) {
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }      
     return nextMoves;
@@ -199,7 +200,7 @@ class Game extends React.Component {
 
   calculateMoves = (arrVal) => {
     
-    let multiArr = twoDimensional(arrVal, 3);
+    let multiArr = this.twoDimensional(arrVal, 3);
     let node = {arr: multiArr, moveCount: 0};
 
     const boardQueue = new PriorityQueue((a, b) => {
@@ -232,14 +233,13 @@ class Game extends React.Component {
     );
 
     boardQueue.enqueue(node);
-    let movelastMove = null;
     top:
     while(!boardQueue.isEmpty()) {
       let currState = boardQueue.dequeue();
-      let nextMoves = findNeighbours(currState);
+      let nextMoves = this.findNeighbours(currState);
       for (let move of nextMoves) {
         move.prevState = currState;
-        if (isPuzzleSolved(move.arr)) {
+        if (this.isPuzzleSolved(move.arr)) {
           return move;
         }
       }
@@ -249,7 +249,7 @@ class Game extends React.Component {
     }
   };
   
-  handleClick = () => { console.log(this.boardRef.current.state.squares);};
+  handleClick = () => { console.log(this.boardRef.current.state.squares); this.calculateMoves(this.boardRef.current.state.squares)};
 
   render() {
     return (
