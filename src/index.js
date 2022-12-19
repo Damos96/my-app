@@ -99,17 +99,12 @@ class Game extends React.Component {
     let tmp = nextState[rowIndex][colIndex];
     nextState[rowIndex][colIndex] = nextState[nextRowIndex][nextColIndex];
     nextState[nextRowIndex][nextColIndex] = tmp;
-    console.log("current move");
-    console.log(currState);
-    console.log("move made");
-    console.log(nextState);
     return nextState;
   };
 
   slideUp = (currState) => {
     let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
     let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
-    console.log(rowIndex+ " "+ colIndex);
     if (rowIndex == 0) {
 
         return null;
@@ -170,31 +165,15 @@ class Game extends React.Component {
     // we are going to try to do all  possible moves and stop at impossible moves.
 
     if (nextState = slideUp(currArr)) {
-      console.log("up move");
-      console.log(nextState);
-      console.log(currArr);
-      console.log({arr: nextState, moveCount: currNode.moveCount + 1});
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }
     if (nextState = slideDown(currArr)) {
-      console.log("down move");
-      console.log(nextState);
-      console.log(currArr);
-      console.log({arr: nextState, moveCount: currNode.moveCount + 1});
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }
     if (nextState = slideLeft(currArr)) {
-      console.log("left move");
-      console.log(nextState);
-      console.log(currArr);
-      console.log({arr: nextState, moveCount: currNode.moveCount + 1});
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }
     if (nextState = slideRight(currArr)) {
-      console.log("right move");
-      console.log(nextState);
-      console.log(currArr);
-      console.log({arr: nextState, moveCount: currNode.moveCount + 1});
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }      
     return nextMoves;
@@ -202,8 +181,6 @@ class Game extends React.Component {
 
 
   isPuzzleSolved = (nodeArrVal) => {
-    console.log("Is solved?")
-    console.log(nodeArrVal);
     
     for (let i = 0; i < nodeArrVal.length; i++) {
       for (let j = 0; j < nodeArrVal[i].length; j++) {
@@ -226,9 +203,7 @@ class Game extends React.Component {
     let node = {arr: multiArr, moveCount: 0};
 
     const boardQueue = new PriorityQueue((a, b) => {
-        console.log("a, b "+ a);
         let hammingDistance = (mdArr) => {
-           console.log("hamming "+mdArr);
            let distance = 0;
            for (let i = 0; i < mdArr.length; i++) {
             for (let j = 0; j < mdArr[i].length; j++) {
@@ -257,26 +232,18 @@ class Game extends React.Component {
     );
 
     boardQueue.enqueue(node);
-    console.log(boardQueue);
-    let lastMove = null;
+    let movelastMove = null;
     top:
     while(!boardQueue.isEmpty()) {
       let currState = boardQueue.dequeue();
-      console.log(currState);
       let nextMoves = findNeighbours(currState);
-      console.log("next move arr");
-      console.log(nextMoves);
       for (let move of nextMoves) {
-        console.log("In for loop" + move);
         move.prevState = currState;
         if (isPuzzleSolved(move.arr)) {
-          console.log(move.arr);
-          lastMove = move;
-          return lastMove;
+          return move;
         }
       }
       nextMoves.forEach(element => {
-        console.log("next element"+ element);
         boardQueue.enqueue(element);
       });
     }
