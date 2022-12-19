@@ -3,11 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 
 import {
-  PriorityQueue,
-  MinPriorityQueue,
-  MaxPriorityQueue,
-  ICompare,
-  IGetCompareValue,
+  PriorityQueue
 } from '@datastructures-js/priority-queue';
 
 class Square extends React.Component {
@@ -105,7 +101,7 @@ class Game extends React.Component {
   slideUp = (currState) => {
     let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
     let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
-    if (rowIndex == 0) {
+    if (rowIndex === 0) {
 
         return null;
     }
@@ -117,7 +113,7 @@ class Game extends React.Component {
     let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
     let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
 
-    if (rowIndex == currState.length - 1) {
+    if (rowIndex === currState.length - 1) {
         return null;
     }
     
@@ -128,7 +124,7 @@ class Game extends React.Component {
     let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
     let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
 
-    if (colIndex == 0) {
+    if (colIndex === 0) {
         return null;
     }
     
@@ -139,7 +135,7 @@ class Game extends React.Component {
     let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
     let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
 
-    if (colIndex == currState[rowIndex].length - 1) {
+    if (colIndex === currState[rowIndex].length - 1) {
         return null;
     }
 
@@ -165,16 +161,16 @@ class Game extends React.Component {
     // we are going to try to do all  possible moves and stop at impossible moves.
 
     let nextState;
-    if (nextState = this.slideUp(currArr)) {
+    if ((nextState = this.slideUp(currArr))) {
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }
-    if (nextState = this.slideDown(currArr)) {
+    if ((nextState = this.slideDown(currArr))) {
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }
-    if (nextState = this.slideLeft(currArr)) {
+    if ((nextState = this.slideLeft(currArr))) {
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }
-    if (nextState = this.slideRight(currArr)) {
+    if ((nextState = this.slideRight(currArr))) {
       nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
     }      
     return nextMoves;
@@ -185,11 +181,11 @@ class Game extends React.Component {
     
     for (let i = 0; i < nodeArrVal.length; i++) {
       for (let j = 0; j < nodeArrVal[i].length; j++) {
-        if (i == nodeArrVal.length - 1 && j == nodeArrVal[i].length -1) {
-          if (nodeArrVal[i][j] != 0) {
+        if (i === nodeArrVal.length - 1 && j === nodeArrVal[i].length -1) {
+          if (nodeArrVal[i][j] !== 0) {
             return false;
           }
-        } else if (nodeArrVal[i][j] != (3*i+j+1)) {
+        } else if (nodeArrVal[i][j] !== (3*i+j+1)) {
           return false;
         }
       }
@@ -208,11 +204,11 @@ class Game extends React.Component {
            let distance = 0;
            for (let i = 0; i < mdArr.length; i++) {
             for (let j = 0; j < mdArr[i].length; j++) {
-              if (i == mdArr.length - 1 && j == mdArr[i].length -1) {
-                if (mdArr[i][j] != 0) {
+              if (i === mdArr.length - 1 && j === mdArr[i].length -1) {
+                if (mdArr[i][j] !== 0) {
                   distance++;
                 }
-              } else if (mdArr[i][j] != (3*i+j+1)) {
+              } else if (mdArr[i][j] !== (3*i+j+1)) {
                 distance++;
               }
             }
