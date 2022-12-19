@@ -90,14 +90,137 @@ class Game extends React.Component {
     this.boardRef = React.createRef();
   }
 
-  calculateMoves = (arrVal) => {
-    
-    let twoDimensional = (arr, size) => {
-      let res = []; 
-      for(let i=0; i < arr.length; i = i+size)
-          res.push(arr.slice(i,i+size).map(ele => Number(ele)));
-      return res;
+  makeMove = (currState, rowIndex, colIndex, nextRowIndex, nextColIndex) => {
+    let nextState = [];
+
+    for (var i = 0; i < currState.length; i++)
+      nextState[i] = currState[i].slice();
+
+    let tmp = nextState[rowIndex][colIndex];
+    nextState[rowIndex][colIndex] = nextState[nextRowIndex][nextColIndex];
+    nextState[nextRowIndex][nextColIndex] = tmp;
+    console.log("current move");
+    console.log(currState);
+    console.log("move made");
+    console.log(nextState);
+    return nextState;
+  };
+
+  slideUp = (currState) => {
+    let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
+    let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
+    console.log(rowIndex+ " "+ colIndex);
+    if (rowIndex == 0) {
+
+        return null;
     }
+
+    return makeMove(currState, rowIndex, colIndex, rowIndex - 1, colIndex);
+  }
+
+  slideDown = (currState) => {
+    let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
+    let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
+
+    if (rowIndex == currState.length - 1) {
+        return null;
+    }
+    
+    return makeMove(currState, rowIndex, colIndex, rowIndex + 1, colIndex);
+  }
+
+  slideLeft = (currState) => {        
+    let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
+    let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
+
+    if (colIndex == 0) {
+        return null;
+    }
+    
+    return makeMove(currState, rowIndex, colIndex, rowIndex, colIndex - 1);
+  }
+
+  slideRight = (currState) => {                
+    let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
+    let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
+
+    if (colIndex == currState[rowIndex].length - 1) {
+        return null;
+    }
+
+    return makeMove(currState, rowIndex, colIndex, rowIndex, colIndex + 1);
+  }
+
+  
+  twoDimensional = (arr, size) => {
+    let res = []; 
+    for(let i=0; i < arr.length; i = i+size)
+        res.push(arr.slice(i,i+size).map(ele => Number(ele)));
+    return res;
+  }
+
+  findNeighbours = (currNode) => {      
+    let currArr = currNode.arr;
+    let nextMoves = [];
+    // possible moves are going to be maximum 4.
+    // if zero is in the middle of the matrix, then it is going to have 4 neighbours.
+    // else if zero is in one of the edges, then it is going to have 3 neighbours.
+    // else zero should be in one of the corners, and it would have 2 neighbours.
+
+    // we are going to try to do all  possible moves and stop at impossible moves.
+
+    if (nextState = slideUp(currArr)) {
+      console.log("up move");
+      console.log(nextState);
+      console.log(currArr);
+      console.log({arr: nextState, moveCount: currNode.moveCount + 1});
+      nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
+    }
+    if (nextState = slideDown(currArr)) {
+      console.log("down move");
+      console.log(nextState);
+      console.log(currArr);
+      console.log({arr: nextState, moveCount: currNode.moveCount + 1});
+      nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
+    }
+    if (nextState = slideLeft(currArr)) {
+      console.log("left move");
+      console.log(nextState);
+      console.log(currArr);
+      console.log({arr: nextState, moveCount: currNode.moveCount + 1});
+      nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
+    }
+    if (nextState = slideRight(currArr)) {
+      console.log("right move");
+      console.log(nextState);
+      console.log(currArr);
+      console.log({arr: nextState, moveCount: currNode.moveCount + 1});
+      nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
+    }      
+    return nextMoves;
+  };
+
+
+  isPuzzleSolved = (nodeArrVal) => {
+    console.log("Is solved?")
+    console.log(nodeArrVal);
+    
+    for (let i = 0; i < nodeArrVal.length; i++) {
+      for (let j = 0; j < nodeArrVal[i].length; j++) {
+        if (i == nodeArrVal.length - 1 && j == nodeArrVal[i].length -1) {
+          if (nodeArrVal[i][j] != 0) {
+            return false;
+          }
+        } else if (nodeArrVal[i][j] != (3*i+j+1)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+  
+
+  calculateMoves = (arrVal) => {
     
     let multiArr = twoDimensional(arrVal, 3);
     let node = {arr: multiArr, moveCount: 0};
@@ -128,133 +251,15 @@ class Game extends React.Component {
             // prioratize for less distance
              return 1;
         }
-        // with lowest price
+        
         return 0;
       }
     );
 
-
-    findNeighbours = (currNode) => {      
-      let currArr = currNode.arr;
-      let nextMoves = [];
-      // possible moves are going to be maximum 4.
-      // if zero is in the middle of the matrix, then it is going to have 4 neighbours.
-      // else if zero is in one of the edges, then it is going to have 3 neighbours.
-      // else zero should be in one of the corners, and it would have 2 neighbours.
-
-      // we are going to try to do all  possible moves and stop at impossible moves.
-
-      makeMove = (currState, rowIndex, colIndex, nextRowIndex, nextColIndex) => {
-        let nextState = currState.slice();
-
-        let tmp = nextState[rowIndex][colIndex];
-        nextState[rowIndex][colIndex] = nextState[nextRowIndex][nextColIndex];
-        nextState[nextRowIndex][nextColIndex] = tmp;
-        console.log("current move");
-        console.log(currState);
-        console.log("move made");
-        console.log(nextState);
-        return nextState;
-      };
-
-      slideUp = (currState) => {
-        let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
-        let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
-        console.log(rowIndex+ " "+ colIndex);
-        if (colIndex == 0) {
-
-            return null;
-        }
-
-        return makeMove(currState, rowIndex, colIndex, rowIndex - 1, colIndex);
-      }
-
-      slideDown = (currState) => {
-        let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
-        let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
-
-        if (rowIndex == currState.length - 1) {
-            return null;
-        }
-        
-        return makeMove(currState, rowIndex, colIndex, rowIndex + 1, colIndex);
-      }
-
-      slideLeft = (currState) => {        
-        let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
-        let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
-
-        if (colIndex == 0) {
-            return null;
-        }
-        
-        return makeMove(currState, rowIndex, colIndex, rowIndex, colIndex - 1);
-      }
-
-      slideRight = (currState) => {                
-        let rowIndex = currState.findIndex((subArr) => subArr.includes(0));
-        let colIndex = (rowIndex > -1) ? currState[rowIndex].indexOf(0) : -1;
-
-        if (colIndex == currState[rowIndex].length - 1) {
-            return null;
-        }
-
-        return makeMove(currState, rowIndex, colIndex, rowIndex, colIndex + 1);
-      }
-
-      if (nextState = slideUp(currArr)) {
-        console.log("up move");
-        console.log(nextState);
-        console.log(currArr);
-        console.log({arr: nextState, moveCount: currNode.moveCount + 1});
-        nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
-      }
-      if (nextState = slideDown(currArr)) {
-        console.log("down move");
-        console.log(nextState);
-        console.log(currArr);
-        console.log({arr: nextState, moveCount: currNode.moveCount + 1});
-        nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
-      }
-      if (nextState = slideLeft(currArr)) {
-        console.log("left move");
-        console.log(nextState);
-        console.log(currArr);
-        console.log({arr: nextState, moveCount: currNode.moveCount + 1});
-        nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
-      }
-      if (nextState = slideRight(currArr)) {
-        console.log("right move");
-        console.log(nextState);
-        console.log(currArr);
-        console.log({arr: nextState, moveCount: currNode.moveCount + 1});
-        nextMoves.push({arr: nextState, moveCount: currNode.moveCount + 1});
-      }      
-      return nextMoves;
-    };
-
-    isPuzzleSolved = (node) => {
-      let nodeArrVal = node.arr;
-      console.log("Is solved?")
-      console.log(nodeArrVal);
-      
-      for (let i = 0; i < nodeArrVal.length; i++) {
-        for (let j = 0; j < nodeArrVal[i].length; j++) {
-          if (i == nodeArrVal.length - 1 && j == nodeArrVal[i].length -1) {
-            if (nodeArrVal[i][j] != 0) {
-              return false;
-            }
-          } else if (nodeArrVal[i][j] != (3*i+j+1)) {
-            return false;
-          }
-        }
-      }
-      return true;
-    };
-
     boardQueue.enqueue(node);
     console.log(boardQueue);
-    
+    let lastMove = null;
+    top:
     while(!boardQueue.isEmpty()) {
       let currState = boardQueue.dequeue();
       console.log(currState);
@@ -263,16 +268,17 @@ class Game extends React.Component {
       console.log(nextMoves);
       for (let move of nextMoves) {
         console.log("In for loop" + move);
-        if (isPuzzleSolved(move)) {
+        move.prevState = currState;
+        if (isPuzzleSolved(move.arr)) {
           console.log(move.arr);
-          break;
+          lastMove = move;
+          return lastMove;
         }
       }
       nextMoves.forEach(element => {
-        console.log("next element");
+        console.log("next element"+ element);
         boardQueue.enqueue(element);
       });
-      await new Promise(r => setTimeout(r, 2000));
     }
   };
   
